@@ -1,0 +1,176 @@
+{% extends 'main/base.html' %}
+{% load settings_value %}
+{% load static %}
+{% load i18n %}
+{% block sub-title %}Добро пожаловать{% endblock %}
+
+{% block style %}{% endblock %}
+
+{% block content %}
+    <div id="id-container-profile" class="container">
+
+      <div class="row">
+        <div class="col s12"><h5>Основное:</h5></div>
+      </div>
+
+      <div class="row">
+        <div class="col s3">ФИО:</div>
+        <div class="col s3">{{ user.last_name }} {{ user.first_name }} {{ user.middle_name }}</div>
+      </div>
+
+      <div class="row">
+        <div class="col s3">Email:</div>
+        <div class="col s3">{{ user.email }}</div>
+      </div>
+
+      <div class="row">
+        <div class="col s3">Компания:</div>
+        <div class="col s3">{{ user.company.name }}</div>
+      </div>
+
+      {% for s in user.seat_set.all %}
+
+        {% if forloop.first %}
+        <div class="row">
+          <div class="col s12"><h5>Постоянные места:</h5></div>
+        </div>
+        {% endif %}
+
+        <div class="row">
+          <div class="col s1">{{ s.name }}</div>
+          <div class="col s2">{{ s.type }}</div>
+        </div>
+
+      {% endfor %}
+
+        <div class="row">
+          <div class="col s12"><h5>Бронирования:</h5></div>
+        </div>
+
+        <div class="row">
+          <div class="col s12">
+
+            <table>
+              <thead>
+                <tr>
+                    <th>Ресурс</th>
+                    <th>Тип</th>
+                    <th>Площадка</th>
+                    <th>Начало</th>
+                    <th>Окончание</th>
+                    <th>PIN</th>
+                    <th>Статус</th>
+                    <th>Описание</th>
+                    <th><i class="material-icons">group</i></th>
+                    <th></th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {% for b in booking %}
+                <tr>
+                  <td>{{ b.resource.name }}</td>
+                  <td>{{ b.resource.type }}</td>
+                  <td>{{ b.resource.area.name }}</td>
+                  <td>{{ b.start_ts }}</td>
+                  <td>{{ b.end_ts }}</td>
+
+                  <td>{% if b.resource.type == 'room' %} {{ b.pin}} {% endif %}</td>
+                  <td>
+                    {% if b.resource.type == 'room' %}
+                    {% if b.is_confirmed %}<div><i class="material-icons color-positive">check_circle_outline</i></div>{% else %}<div><i class="material-icons color-negative">help_outline</i></div>{% endif %}
+                    {% endif %}
+                  </td>
+                  <td>{{ b.event.description }}</td>
+                  <td><div class="profile-participant-link tooltipped" data-position="top" data-tooltip="{% for u in  b.event.users.all%}{{ u.username }}; {% endfor %}">{{ b.event.users.count }}</div></td>
+                  <td><div id="id-delete-{{ b.id }}" data-id="{{ b.id }}" class="booking-delete-button" href=""><i class="material-icons right trash">delete</i></div></td>
+
+                </tr>
+                {% endfor %}
+
+              </tbody>
+            </table>
+
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col s12"><h5>Запросы:</h5></div>
+        </div>
+        <div class="row">
+          <div class="col s12">
+            <table>
+              <thead>
+                <tr>
+                    <th>Время создания</th>
+                    <th>Сообщение</th>
+                    <th>Активность</th>
+                    <th></th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {% for t in tasks %}
+                <tr>
+                  <td>{{ t.created_at }}</td>
+                  <td>{{ t.message }}</td>
+                  <td>{{ t.is_active }}</td>
+                  <td><div id="id-delete-task-{{ t.id }}" data-id="{{ t.id }}" class="task-delete-button" href=""><i class="material-icons right trash">delete</i></div></td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col s1"></div>
+          <div class="col s1"></div>
+          <div class="col s1"></div>
+          <div class="col s1"></div>
+          <div class="col s1"></div>
+          <div class="col s1"></div>
+          <div class="col s1"></div>
+          <div class="col s1"></div>
+        </div>
+
+
+
+    </div>
+{% endblock %}
+
+{% block extrajs %}
+  <script>
+    let flag = false
+    $(document).ready(function() {
+
+      $("#id-button-booking").on('click', function(e){
+
+      })
+
+      $(".booking-delete-button").on('click', function(e){
+          request({url:'/api/booking/' + $(e.currentTarget).data('id'), type:'DELETE', data:{}, ondone:onDeleteSuccess})
+      })
+
+      $(".task-delete-button").on('click', function(e){
+          request({url:'/api/task/' + $(e.currentTarget).data('id'), type:'DELETE', data:{}, ondone:onDeleteSuccess})
+      })
+
+      flag = true
+    });
+
+
+    function onChangeDatepickerTarget(e){
+      //let url = "/main/booking/{{ resource.id }}/" + helper.target_date
+      //if (flag){
+      //  window.location.href = url;
+      //}
+
+    }
+
+    function onDeleteSuccess(response){
+      window.location.reload();
+    }
+
+  </script>
+{% endblock %}

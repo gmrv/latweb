@@ -1,0 +1,256 @@
+{% extends 'main/base.html' %}
+{% load settings_value %}
+{% load static %}
+{% load i18n %}
+{% block sub-title %}Добро пожаловать{% endblock %}
+
+{% block style %}{% endblock %}
+
+{% block content %}
+    <div class="container">
+
+      <div class="row">
+
+        <div class="col s4">
+          <div class="container">
+
+            {% if resource.seat.persisted %}
+              {#Если это постоянное место#}
+              {% for c in calendar %}
+                <div class="row booking-calendar">
+                  <div class="col s2">{{ c.mil_hour }}:{{ c.minutes }}</div>
+                  <div class="col s8 center name-cell booked">{{ resource.seat.owner.username }}</div>
+                </div>
+              {% endfor %}
+            {% else %}
+              {#Если обычный ресурс#}
+              {% for c in calendar %}
+                <div class="row booking-calendar">
+                  <div class="col s2">{{ c.mil_hour }}:{{ c.minutes }}</div>
+                  {% if c.reserved  %}
+                    <div class="col s8 center name-cell booked z-depth-1">{{ c.user }}</div>
+                  {% else %}
+                    <div class="col s8 center name-cell free z-depth-1">&nbsp;</div>
+                  {% endif %}
+                </div>
+              {% endfor %}
+             {% endif %}
+
+
+
+          </div>
+        </div>
+
+        <div class="col s8">
+          <div class="container">
+
+            <div class="row">
+              <div class="col s6">Площадка:</div>
+              <div id="id-div-area-name" class="col s6"> {{ user.def_area.name }}</div>
+            </div>
+
+            <div class="row">
+              <div class="col s6">Ресурс: {{ resource.name }}  </div>
+              <div class="col s6">{{ resource.type }}</div>
+            </div>
+
+            <div class="row">
+              <div class="col s6">Процент брони: </div>
+              <div class="col s6">{{ percent_of_booked_time }}</div>
+            </div>
+
+            <div class="row">
+              <div class="col s12">&nbsp;</div>
+            </div>
+
+            {% if resource.seat.status == 'persisted' %}
+
+            <div class="row valign-wrapper">
+              <div class="col s12">Постоянное место</div>
+            </div>
+
+            {% else %}
+
+            <div class="row valign-wrapper">
+              <div class="col s12">Параметры бронирования</div>
+            </div>
+
+            <div class="row valign-wrapper">
+              <div class="input-field col s5">
+                <input id="id-datepicker-start" type="text" class="datepicker  booking-picker">
+                <label>Дата начала</label>
+              </div>
+              <div class="col s1"></div>
+              <div class="input-field col s5">
+                <input id="id-timepicker-start" type="text" class="timepicker booking-picker" value="{% settings_value 'OPEN_TIME' %}">
+                <label>Время начала</label>
+              </div>
+            </div>
+
+            <div class="row valign-wrapper">
+              <div class="input-field col s5">
+                <input id="id-datepicker-end"  type="text" class="datepicker booking-picker">
+                <label>Дата окончания</label>
+              </div>
+              <div class="col s1"></div>
+              <div class="input-field col s5">
+                <input id="id-timepicker-end"  type="text" class="timepicker booking-picker" value="{% settings_value 'CLOSE_TIME' %}">
+                <label>Время окончания</label>
+              </div>
+            </div>
+
+
+            <div {% if not resource.type == 'room' %}style="display:none"{% endif %}>
+
+              <div class="row valign-wrapper">
+                <div class="input-field col s12">
+                  <input id="id-input-event-text"  type="text">
+                  <label>Событие</label>
+                </div>
+              </div>
+
+              <div class="row valign-wrapper">
+                <div class="input-field col s12" >
+                  <select multiple id="id-input-event-participants">
+                    {% for u in users %}
+                      <option value="{{ u.id }}">{{ u.first_name }} {{ u.middle_name }} {{ u.last_name }}</option>
+                    {% endfor %}
+                  </select>
+                  <label>Участники события</label>
+                </div>
+              </div>
+
+            </div>
+
+
+            <div class="row valign-wrapper">
+              <div class="col s2"><div id="id-div-status-icon"></div></div>
+              <div class="col s10"><div id="id-div-status-text"></div></div>
+            </div>
+
+            <div class="row">
+              <div class="col s12"><a id="id-button-booking" class="waves-effect waves-light btn progress">Забронировать</a></div>
+            </div>
+
+            {% endif %}
+
+
+
+
+            <div class="row">
+
+              <ul class="collapsible z-depth-0">
+              <li>
+                <div class="collapsible-header valign-wrapper"><i class="material-icons" style="font-size: 1.0rem;">build</i>Запрос на обслуживание</div>
+                <div class="collapsible-body">
+                  <div class="">
+                    <div class="row">
+                      <div class="col s12">
+                        <div class="input-field col s12">
+                          <textarea id="id-textarea-task" class="materialize-textarea"></textarea>
+                          <label for="id-textarea-task">Текст запроса</label>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col s12"><a id="id-button-task" class="waves-effect waves-light btn progress">Отпавить</a></div>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            </ul>
+
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+{% endblock %}
+
+{% block extrajs %}
+  <script>
+    let flag = false
+    $(document).ready(function() {
+
+      $("#id-button-booking").on('click', function(e){
+        let dropdownParticipants = M.FormSelect.getInstance($('#id-input-event-participants'));
+        let data = {
+          "user_id": helper.user_id,
+          "resource_id":{{ resource.id }},
+          "date_start": $("#id-datepicker-start").val(),
+          "time_start": $("#id-timepicker-start").val(),
+          "date_end": $("#id-datepicker-end").val(),
+          "time_end": $("#id-timepicker-end").val(),
+          "event_text": $("#id-input-event-text").val(),
+          "event_part": dropdownParticipants.getSelectedValues().toString()
+        }
+        request({url:'/api/booking', type:'POST', data:data, ondone:onBookingSuccess})
+      });
+
+      $("#id-button-task").on('click', function(e){
+        let data = {
+          "user_id": helper.user_id,
+          "resource_id":{{ resource.id }},
+          "message": $("#id-textarea-task").val(),
+        }
+        request({
+          url:'/api/task', type:'POST', data:data, ondone:function(response){
+            M.toast({html: "Запрос отправлен успешно."})
+          }
+        });
+      });
+
+      $(".booking-picker").on('change', checkBookingInterval);
+
+      checkBookingInterval();
+      flag = true
+    });
+
+    function checkBookingInterval(e){
+      let data = {
+        "resource_id":{{ resource.id }},
+        "date_start": $("#id-datepicker-start").val(),
+        "time_start": $("#id-timepicker-start").val(),
+        "date_end": $("#id-datepicker-end").val(),
+        "time_end": $("#id-timepicker-end").val(),
+      }
+      request({
+        url: '/api/booking/can/' +
+          data.resource_id + '/' +
+          data.date_start + '/' +
+          data.time_start + '/' +
+          data.date_end + '/' +
+          data.time_end,
+        type: 'GET',
+        ondone: function (response) {
+          let s = response.source.split('/')
+          let t = s[5] + ' ' + s[6] + ' :: ' + s[7] + ' ' + s[8]
+          if (response.result) {
+            $("#id-button-booking").removeAttr('disabled')
+            $("#id-div-status-icon").html('<i class="material-icons color-positive">done</i>')
+          } else {
+            $("#id-button-booking").attr('disabled', '')
+            $("#id-div-status-icon").html('<i class="material-icons color-negative">block</i>')
+          }
+          $("#id-div-status-text").text(t)
+        }
+      })
+    }
+
+    function onBookingSuccess(response){
+      window.location.reload()
+    }
+
+    function onChangeDatepickerTarget(e){
+      let url = "/main/resource/{{ resource.id }}/" + helper.target_date
+      if (flag){
+        window.location.href = url;
+      }
+
+    }
+
+  </script>
+{% endblock %}
