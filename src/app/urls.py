@@ -27,17 +27,13 @@ router = routers.DefaultRouter()
 app_name = 'latweb'
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    # path('api/v1/', include(router.urls)),
-    # path('api-auth/', include('rest_framework.urls', namespace='api_auth')),
-
     path('favicon.ico', RedirectView.as_view(url='/static/img/favicon.ico', permanent=True)),
     path('login/', auth_views.LoginView.as_view(), name='login'),
     path('logout/', auth_views.logout_then_login, name='logout'),
     path('admin/doc/', include('django.contrib.admindocs.urls')),
     path('admin/', admin.site.urls),
 
-    # path('', RedirectView.as_view(url='/main/home', permanent=True)),
     path('', root, name='root'),
+    path('api/', include(('api.urls', 'api'), namespace='api')),
     path('main/', include(('main.urls', 'main'), namespace='main')),
 ]
