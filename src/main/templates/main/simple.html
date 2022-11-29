@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <title>Report</title>
+</head>
+<body>
+  {% for line in lines %}
+    <div>
+     {{ line.name }} {{ line.created_ts|date:'m.d H:i:s' }}
+    </div>
+  {% endfor %}
+</body>
+
+
+
+

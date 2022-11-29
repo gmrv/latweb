@@ -1,11 +1,20 @@
+import datetime
+
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
+from django.utils import timezone
+
+from api.models.core import LivenessReport
 
 
 def root(request):
-    return HttpResponse(content="ok")
+    lines = LivenessReport.objects.order_by('-created_ts').all()
+    context = {
+        "lines": lines
+    }
+    return render(request, 'main/simple.html', context)
 
 # @login_required
 def index(request):
