@@ -10,3 +10,12 @@ def get_username_from_call_stack():
                     return 'anonymous'
                 return item.frame.f_locals['request'].user.username
     return 'unknown'
+
+def get_all_intervals():
+    days = []
+    for day in range(1,32):
+        minutes = []
+        for minute in range(0,1440):
+            minutes.append(False)
+        days.append(minutes)
+    return days

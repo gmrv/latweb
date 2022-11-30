@@ -5,13 +5,40 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
   <title>Report</title>
+
+  <style>
+    td.minute {
+      border: solid #fcc6c6 1px;
+      width: 1px;
+      background: #fcc6c6;
+    }
+
+    td.minute.ok {
+      border: solid green 1px;
+      width: 1px;
+      background: green;
+    }
+
+  </style>
+
 </head>
 <body>
-  {% for line in lines %}
-    <div>
-     {{ line.name }} {{ line.created_ts|date:'m.d H:i:s' }}
-    </div>
+{#  {% for minute in minutes %}#}
+{#    <div>#}
+{#     {{ line.name }} {{ line.created_ts|date:'m.d H:i:s' }}#}
+{#    </div>#}
+{#  {% endfor %}#}
+
+{{ last|date:'m.d H:i:s' }}
+<table>
+  {% for day in intervals %}
+    <tr class="day">
+      {% for minute in day %}
+        <td class="minute {% if minute %} ok {% endif %} }"></td>
+      {% endfor %}
+    </tr>
   {% endfor %}
+</table>
 </body>
 
 

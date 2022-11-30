@@ -7,12 +7,24 @@ from django.urls import reverse
 from django.utils import timezone
 
 from api.models.core import LivenessReport
+from main.utils import get_all_intervals
 
 
 def root(request):
-    lines = LivenessReport.objects.order_by('-created_ts').all()
+    # lines = LivenessReport.objects.order_by('-created_ts').all()
+    lines = LivenessReport.objects.order_by('created_ts').all()
+
+    inters = get_all_intervals()
+    for line in lines:
+        local_time = line.created_ts.astimezone()
+        min_index = local_time.hour * 60 + local_time.minute
+        day_index = local_time.day - 1
+        inters[day_index][min_index] = True
+        print(f"day_index={day_index}, min_index={min_index}, time={line.created_ts}")
+
     context = {
-        "lines": lines
+        "intervals": inters,
+        "last": local_time
     }
     return render(request, 'main/simple.html', context)
 
