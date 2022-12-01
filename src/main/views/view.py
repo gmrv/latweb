@@ -9,21 +9,30 @@ from django.utils import timezone
 from api.models.core import LivenessReport
 from main.utils import get_all_intervals
 
+class IntervalViewItem():
+    minutes: int = 0
+    hint: str = ""
+
 
 def root(request):
-    # lines = LivenessReport.objects.order_by('-created_ts').all()
-    lines = LivenessReport.objects.order_by('created_ts').all()
+    # report_lines = LivenessReport.objects.order_by('-created_ts').all()
+    report_lines = LivenessReport.objects.order_by('created_ts').all()
 
-    inters = get_all_intervals()
-    for line in lines:
+    report_intervals = get_all_intervals()
+
+    for i in range(0,len(report_intervals)):
+        for j in range(0,len(report_intervals[i])):
+            report_intervals[i][j] = IntervalViewItem()
+
+    for line in report_lines:
         local_time = line.created_ts.astimezone()
-        min_index = local_time.hour * 60 + local_time.minute
+        interval_index = (local_time.hour * 60 + local_time.minute) // 10
         day_index = local_time.day - 1
-        inters[day_index][min_index] = True
-        print(f"day_index={day_index}, min_index={min_index}, time={line.created_ts}")
+        report_intervals[day_index][interval_index].minutes += 1
+        report_intervals[day_index][interval_index].hint += f"{local_time.strftime('%d.%m - %H:%M:%S')};\n"
 
     context = {
-        "intervals": inters,
+        "intervals": report_intervals,
         "last": local_time
     }
     return render(request, 'main/simple.html', context)

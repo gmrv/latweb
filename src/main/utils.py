@@ -15,7 +15,7 @@ def get_all_intervals():
     days = []
     for day in range(1,32):
         minutes = []
-        for minute in range(0,1440):
-            minutes.append(False)
+        for minute in range(0,144):
+            minutes.append(0)
         days.append(minutes)
     return days

@@ -7,13 +7,19 @@
   <title>Report</title>
 
   <style>
-    td.minute {
+    td.minute.red {
       border: solid #fcc6c6 1px;
       width: 1px;
       background: #fcc6c6;
     }
 
-    td.minute.ok {
+    td.minute.yellow {
+      border: solid yellow 1px;
+      width: 1px;
+      background: yellow;
+    }
+
+    td.minute.green {
       border: solid green 1px;
       width: 1px;
       background: green;
@@ -33,8 +39,14 @@
 <table>
   {% for day in intervals %}
     <tr class="day">
-      {% for minute in day %}
-        <td class="minute {% if minute %} ok {% endif %} }"></td>
+      {% for item in day %}
+        {% if item.minutes == 10 %}
+         <td class="minute green" title="{{ item.hint }}"></td>
+        {% elif item.minutes == 0 %}
+         <td class="minute red" title="{{ item.hint }}"></td>
+        {% else %}
+          <td class="minute yellow" title="{{ item.hint }}"></td>
+        {% endif %}
       {% endfor %}
     </tr>
   {% endfor %}
