@@ -32,9 +32,15 @@
 
 {% block extrajs %}
   <script>
-    $(document).ready(function() {
-      let url = "/api/area/" + helper.user_default_area_id + "/" + helper.target_date
-      request({url:url, type:'GET', ondone:fillPage})
+    document.addEventListener('DOMContentLoaded', function(){
+      M.AutoInit();
+      document.querySelectorAll("td.minute.lyellow, td.minute.lgreen").forEach(
+        function(item){
+          item.addEventListener('click', function(){
+            M.toast({html: "<pre>"  + item.title + "</pre>"});
+          });
+        }
+      );
     });
   </script>
 {% endblock %}
