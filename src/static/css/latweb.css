@@ -42,3 +42,7 @@ td.minute.lgreen {
   background: green;
   cursor: pointer;
 }
+
+img.move {
+  max-width: 100%;
+}
