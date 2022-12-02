@@ -33,10 +33,12 @@ td.minute.lyellow {
   border: solid yellow 1px;
   width: 1px;
   background: yellow;
+  cursor: pointer;
 }
 
 td.minute.lgreen {
   border: solid green 1px;
   width: 1px;
   background: green;
+  cursor: pointer;
 }

@@ -19,7 +19,7 @@ from rest_framework import routers
 from django.views.generic import RedirectView
 from django.contrib.auth import views as auth_views
 
-from main.views.root import root, profile
+from main.views.root import profile, home
 
 router = routers.DefaultRouter()
 #router.register(r'entities', EntityView)
@@ -34,7 +34,7 @@ urlpatterns = [
     path('admin/doc/', include('django.contrib.admindocs.urls')),
     path('admin/', admin.site.urls),
 
-    path('', root, name='root'),
+    path('', home, name='root'),
     path('api/', include(('api.urls', 'api'), namespace='api')),
     path('main/', include(('main.urls', 'main'), namespace='main')),
 ]
