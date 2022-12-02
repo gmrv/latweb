@@ -145,3 +145,5 @@ REST_FRAMEWORK = {
 }
 
 FIXTURE_DIRS = ['seed']
+
+SITE_NAME = "latweb"

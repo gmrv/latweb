@@ -29,7 +29,7 @@ def liveness_report(request):
         interval_index = (local_time.hour * 60 + local_time.minute) // 10
         day_index = local_time.day - 1
         report_intervals[day_index][interval_index].minutes += 1
-        report_intervals[day_index][interval_index].hint += f"{local_time.strftime('%d.%m - %H:%M:%S')};\n"
+        report_intervals[day_index][interval_index].hint += f"{local_time.strftime('%d.%m - %H:%M:%S')}\n"
 
     context = {
         "intervals": report_intervals,
