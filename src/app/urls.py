@@ -19,7 +19,7 @@ from rest_framework import routers
 from django.views.generic import RedirectView
 from django.contrib.auth import views as auth_views
 
-from main.views.view import root
+from main.views.root import root, profile
 
 router = routers.DefaultRouter()
 #router.register(r'entities', EntityView)
@@ -28,8 +28,9 @@ app_name = 'latweb'
 
 urlpatterns = [
     path('favicon.ico', RedirectView.as_view(url='/static/img/favicon.ico', permanent=True)),
-    path('login/', auth_views.LoginView.as_view(), name='login'),
-    path('logout/', auth_views.logout_then_login, name='logout'),
+    path('accounts/login/', auth_views.LoginView.as_view(), name='login'),
+    path('accounts/logout/', auth_views.logout_then_login, name='logout'),
+    path('accounts/profile/', profile, name='profile'),
     path('admin/doc/', include('django.contrib.admindocs.urls')),
     path('admin/', admin.site.urls),
 

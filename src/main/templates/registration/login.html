@@ -1,0 +1,93 @@
+{% load static %}
+{% load i18n %}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+	{% block style %}<style></style>{% endblock %}
+
+	{% block scripts %}
+	<script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+	<!-- Compiled and minified CSS -->
+	<link rel="stylesheet" href="{% static 'css/materialize.min.css' %}" />
+	<link rel="stylesheet" href="{% static 'css/atmo.css' %}" />
+	<!-- Compiled and minified JavaScript -->
+	<script src="{% static 'js/materialize.min.js' %}"></script>
+	<!-- Fonts are fun -->
+	<link href="{% static 'fonts/roboto/Roboto-Regular.eot' %}" rel="vnd.ms-fontobject">
+	{% endblock %}
+
+</head>
+<body>
+{% block content %}
+
+	{% if form.errors %}
+		<p class='error'>{% blocktrans %}Введенный пароль и логин не совпадают. Попробуйте еще раз.{% endblocktrans %}</p>
+	{% endif %}
+
+	<form id='login_form'  method="post" action="">
+		<div class="container" id='login_box'>
+			<div class="row">
+
+			</div>
+			<div class="row center-align">
+        <div id='login_header'><img src="/static/img/favicon.ico"></div>
+      </div>
+			<div class="row">
+				<div class="col s4"></div>
+				<div class="col s4">{{ form.username }}</div>
+				<div class="col s4"></div>
+			</div>
+			<div class="row">
+				<div class="col s4"></div>
+				<div class="col s4">{{ form.password }}</div>
+				<div class="col s4"></div>
+			</div>
+			<div class="row center-align">
+				<div class="col s4"></div>
+				<div class="col s4"><button type="submit" value="Login" class="waves-effect waves-light btn wide">Войти</button></div>
+				<div class="col s4"></div>
+				<input type="hidden" name="next" value="{{ next }}" />
+			</div>
+			{% csrf_token %}
+		</div>
+	</form>
+
+{% endblock %}
+
+{% block extrajs %}
+	<script>
+		//$(document).ready(function() {
+			$('#id_username').attr('placeholder', 'Логин');
+			$('#id_password').attr('placeholder', 'Пароль');
+
+			$('#reg_box').hide();
+			//$('.button-collapse').sideNav();
+			// $('#login_box').show();
+
+			$('#reg_link').on('click', function(e) {
+				e.preventDefault();
+
+				$('#login_box').hide();
+				$('#reg_box').show();
+			});
+
+			$('#login_link').on('click', function(e) {
+				e.preventDefault();
+
+				$('#reg_box').hide();
+				$('#login_box').show();
+			})
+
+			$('.error').css('color', 'red');
+			$('.error').css('font-style', 'italic');
+			$('.error').css('text-align', 'center');
+		 //})
+	</script>
+{% endblock %}
+</body>
+</html>

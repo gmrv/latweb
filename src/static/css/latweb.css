@@ -1,0 +1,42 @@
+a.brand-logo.custom {
+  padding-left: 10px;
+}
+
+div.report {
+  width: 95%;
+  overflow: auto;
+  max-width: fit-content;
+}
+
+table.report{
+  width: fit-content;
+  display: inherit;
+  border-collapse: inherit;
+  border-spacing: 1px;
+}
+
+table.report td {
+  padding: 5px 5px;
+  display: table-cell;
+  text-align: left;
+  vertical-align: middle;
+  border-radius: 10px;
+}
+
+td.minute.lred {
+  border: solid #fcc6c6 1px;
+  width: 1px;
+  background: #fcc6c6;
+}
+
+td.minute.lyellow {
+  border: solid yellow 1px;
+  width: 1px;
+  background: yellow;
+}
+
+td.minute.lgreen {
+  border: solid green 1px;
+  width: 1px;
+  background: green;
+}

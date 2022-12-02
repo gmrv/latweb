@@ -5,6 +5,22 @@ from django.urls import reverse
 
 
 # @login_required
+def root(request):
+    context = {
+        'user': "request.user.extuser",
+        'area': "xuser.def_area",
+        'seats': "seats",
+        'rooms': "rooms",
+        'target_date': "target_date"
+    }
+    return render(request, 'main/home.html', context)
+
+# @login_required
+def profile(request):
+    return HttpResponseRedirect(reverse('root'))
+
+
+# @login_required
 def index(request):
     return HttpResponseRedirect(reverse('main:home'))
 

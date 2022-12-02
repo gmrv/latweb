@@ -13,8 +13,8 @@ class IntervalViewItem():
     minutes: int = 0
     hint: str = ""
 
-
-def root(request):
+# @login_required
+def liveness_report(request):
     # report_lines = LivenessReport.objects.order_by('-created_ts').all()
     report_lines = LivenessReport.objects.order_by('created_ts').all()
 

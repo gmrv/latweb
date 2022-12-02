@@ -1,58 +1,42 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-  <title>Report</title>
+{% extends 'main/base.html' %}
+{% load static %}
+{% load i18n %}
+{% block sub-title %}###{% endblock %}
 
-  <style>
-    td.minute.red {
-      border: solid #fcc6c6 1px;
-      width: 1px;
-      background: #fcc6c6;
-    }
+{% block style %}{% endblock %}
 
-    td.minute.yellow {
-      border: solid yellow 1px;
-      width: 1px;
-      background: yellow;
-    }
+{% block content %}
+  <div >
+    <div class="center">{{ last|date:'m.d H:i:s' }}</div>
 
-    td.minute.green {
-      border: solid green 1px;
-      width: 1px;
-      background: green;
-    }
-
-  </style>
-
-</head>
-<body>
-{#  {% for minute in minutes %}#}
-{#    <div>#}
-{#     {{ line.name }} {{ line.created_ts|date:'m.d H:i:s' }}#}
-{#    </div>#}
-{#  {% endfor %}#}
-
-{{ last|date:'m.d H:i:s' }}
-<table>
-  {% for day in intervals %}
-    <tr class="day">
-      {% for item in day %}
-        {% if item.minutes == 10 %}
-         <td class="minute green" title="{{ item.hint }}"></td>
-        {% elif item.minutes == 0 %}
-         <td class="minute red" title="{{ item.hint }}"></td>
-        {% else %}
-          <td class="minute yellow" title="{{ item.hint }}"></td>
-        {% endif %}
+    <div class="container report">
+    <table class="report">
+      {% for day in intervals %}
+        <tr class="day">
+          {% for item in day %}
+            {% if item.minutes == 10 %}
+             <td class="minute lgreen" title="{{ item.hint }}"></td>
+            {% elif item.minutes == 0 %}
+             <td class="minute lred" title="{{ item.hint }}"></td>
+            {% else %}
+              <td class="minute lyellow" title="{{ item.hint }}"></td>
+            {% endif %}
+          {% endfor %}
+        </tr>
       {% endfor %}
-    </tr>
-  {% endfor %}
-</table>
-</body>
+    </table>
+    </div>
 
+  </div>
+{% endblock %}
 
+{% block extrajs %}
+  <script>
+    $(document).ready(function() {
+      let url = "/api/area/" + helper.user_default_area_id + "/" + helper.target_date
+      request({url:url, type:'GET', ondone:fillPage})
+    });
+  </script>
+{% endblock %}
 
 
