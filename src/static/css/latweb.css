@@ -2,6 +2,10 @@ a.brand-logo.custom {
   padding-left: 10px;
 }
 
+div.head {
+  margin-top: 20px;
+}
+
 div.report {
   width: 95%;
   overflow: auto;

@@ -11,7 +11,7 @@
 
     <div class="container">
 
-      <div class="row">
+      <div class="row head">
         <div class="center">{{ last|date:'m.d H:i:s' }}</div>
       </div>
       <div class="row">
@@ -32,7 +32,7 @@
             <option {% if min_per_interval == 30 %}selected{% endif %} value="30">30</option>
             <option {% if min_per_interval == 60 %}selected{% endif %} value="60">60</option>
           </select>
-          <label>Масштаб деления</label>
+          <label>Масштаб (мин.)</label>
         </div>
 
         <div class="input-field col s3 right-align">
