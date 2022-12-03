@@ -1,5 +1,7 @@
 import inspect
 
+from app import settings
+
 def get_username_from_call_stack():
     stack_arr = inspect.stack()
     for item in stack_arr:
@@ -11,11 +13,11 @@ def get_username_from_call_stack():
                 return item.frame.f_locals['request'].user.username
     return 'unknown'
 
-def get_all_intervals():
+def get_all_intervals(min_per_interval = settings.MINUTES_PER_INTERVAL_DEFAULT):
     days = []
     for day in range(1,32):
         minutes = []
-        for minute in range(0,144):
+        for minute in range(0, int(1440 / min_per_interval)):
             minutes.append(0)
         days.append(minutes)
     return days

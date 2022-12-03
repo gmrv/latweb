@@ -7,7 +7,9 @@ from django.urls import reverse
 from django.utils import timezone
 
 from api.models.core import LivenessReport
+from app import settings
 from main.utils import get_all_intervals
+
 
 class IntervalViewItem():
     minutes: int = 0
@@ -15,10 +17,15 @@ class IntervalViewItem():
 
 @login_required
 def liveness_report(request):
-    # report_lines = LivenessReport.objects.order_by('-created_ts').all()
-    report_lines = LivenessReport.objects.order_by('created_ts').all()
 
-    report_intervals = get_all_intervals()
+    query = LivenessReport.objects.all()
+
+    device_name = query.values().distinct().first()["name"]
+    min_per_interval = settings.MINUTES_PER_INTERVAL_DEFAULT
+
+    report_lines = query.filter(name=device_name).order_by('created_ts')
+
+    report_intervals = get_all_intervals(min_per_interval)
 
     for i in range(0,len(report_intervals)):
         for j in range(0,len(report_intervals[i])):
@@ -26,14 +33,15 @@ def liveness_report(request):
 
     for line in report_lines:
         local_time = line.created_ts.astimezone()
-        interval_index = (local_time.hour * 60 + local_time.minute) // 10
+        interval_index = (local_time.hour * 60 + local_time.minute) // min_per_interval
         day_index = local_time.day - 1
         report_intervals[day_index][interval_index].minutes += 1
         report_intervals[day_index][interval_index].hint += f"{local_time.strftime('%d.%m - %H:%M:%S')}\n"
 
     context = {
         "intervals": report_intervals,
-        "last": local_time
+        "last": local_time,
+        "min_per_interval": min_per_interval
     }
     return render(request, 'main/simple.html', context)
 
