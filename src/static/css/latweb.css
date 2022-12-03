@@ -16,35 +16,7 @@ table.report{
   width: fit-content;
   display: inherit;
   border-collapse: inherit;
-  border-spacing: 1px;
-}
-
-table.report td {
-  padding: 5px 5px;
-  display: table-cell;
-  text-align: left;
-  vertical-align: middle;
-  border-radius: 10px;
-}
-
-td.minute.lred {
-  border: solid #fcc6c6 1px;
-  width: 1px;
-  background: #fcc6c6;
-}
-
-td.minute.lyellow {
-  border: solid yellow 1px;
-  width: 1px;
-  background: yellow;
-  cursor: pointer;
-}
-
-td.minute.lgreen {
-  border: solid green 1px;
-  width: 1px;
-  background: green;
-  cursor: pointer;
+  border-spacing: 0px;
 }
 
 img.move {
@@ -56,3 +28,14 @@ pre.toast-msg {
   font-size: 12px;
   line-height: 12px;
 }
+
+td.pietd {
+  border: solid green 0px;
+  padding: 1px 1px;
+  line-height: 11px;
+}
+
+td.pietd.clickable {
+  cursor: pointer;
+}
+

@@ -39,7 +39,6 @@
           <a id="id-apply" class="waves-effect waves-light btn">ок</a>
         </div>
 
-
       </div>
 
       <div class="row report">
@@ -47,13 +46,7 @@
           {% for day in intervals %}
             <tr class="day">
               {% for item in day %}
-                {% if item.minutes == min_per_interval %}
-                 <td class="minute lgreen" title="{{ item.hint }}"></td>
-                {% elif item.minutes == 0 %}
-                 <td class="minute lred" title="{{ item.hint }}"></td>
-                {% else %}
-                  <td class="minute lyellow" title="{{ item.hint }}"></td>
-                {% endif %}
+                <td class="pietd {% if item.percent > 0 %}clickable{% endif %} " title="{{ item.hint }}"><div class="pie" data-percent="{{ item.percent_str }}"></div></td>
               {% endfor %}
             </tr>
           {% endfor %}
@@ -82,14 +75,48 @@
         document.location = `/main/livenessreport/${deviceName}/${minPerInt}`
       })
 
-      document.querySelectorAll("td.minute.lyellow, td.minute.lgreen").forEach(
+      document.querySelectorAll("td.clickable").forEach(
         function(item){
           item.addEventListener('click', function(){
             M.toast({html: "<pre class='toast-msg'>"  + item.title + "</pre>"});
           });
         }
       );
+
+      drawPies()
     });
+
+    function drawPies(){
+      {#<div class="pie" data-percent="60"></div>#}
+      const PIE_SIZE = 12
+
+      let ps2 = PIE_SIZE/2
+
+      let elems = document.querySelectorAll('.pie');
+      for (let elem of elems) {
+        elem.innerHTML=`<canvas class="pie-canvas" width="${PIE_SIZE}" height="${PIE_SIZE}"></canvas>`
+
+        let percent = elem.dataset.percent
+        let ostatok = 100 - percent
+        let cnvs = elem.querySelector(".pie-canvas")
+        let ctx = cnvs.getContext("2d");
+
+        let currentAngle = 0;
+        const results = [
+          {total: percent, colour: "green"},
+          {total: ostatok, colour: "#fcc6c6"},
+        ];
+        for (let percentValues of results) {
+          let portionAngle = (percentValues.total / 100) * 2 * Math.PI;
+          ctx.beginPath();
+          ctx.arc(ps2, ps2, ps2, currentAngle, currentAngle + portionAngle);
+          currentAngle += portionAngle;
+          ctx.lineTo(ps2, ps2);
+          ctx.fillStyle = percentValues.colour;
+          ctx.fill();
+        }
+      }
+    }
   </script>
 {% endblock %}
 

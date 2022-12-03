@@ -13,7 +13,17 @@ from main.utils import get_all_intervals
 
 class IntervalViewItem():
     minutes: int = 0
+    max_minutes: int = 0
+    percent: int = 0
+
     hint: str = ""
+
+    def inc(self):
+        self.minutes +=1
+        self.percent = (self.minutes / self.max_minutes * 100)
+
+    def percent_str(self):
+        return str(self.percent)
 
 @login_required
 def liveness_report(request, device_name=None, min_per_interval=None):
@@ -33,12 +43,13 @@ def liveness_report(request, device_name=None, min_per_interval=None):
     for i in range(0,len(report_intervals)):
         for j in range(0,len(report_intervals[i])):
             report_intervals[i][j] = IntervalViewItem()
+            report_intervals[i][j].max_minutes = min_per_interval
 
     for line in report_lines:
         local_time = line.created_ts.astimezone()
         interval_index = (local_time.hour * 60 + local_time.minute) // min_per_interval
         day_index = local_time.day - 1
-        report_intervals[day_index][interval_index].minutes += 1
+        report_intervals[day_index][interval_index].inc()
         report_intervals[day_index][interval_index].hint += f"{local_time.strftime('%d.%m - %H:%M:%S')}\n"
 
     context = {
