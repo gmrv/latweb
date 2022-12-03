@@ -1,5 +1,4 @@
 {% extends 'main/base.html' %}
-{% load settings_value %}
 {% load static %}
 {% load i18n %}
 {% block sub-title %}liveness report{% endblock %}
@@ -7,34 +6,82 @@
 {% block style %}{% endblock %}
 
 {% block content %}
-  <div >
-    <div class="center">{{ last|date:'m.d H:i:s' }}</div>
 
-    <div class="container report">
-    <table class="report">
-      {% for day in intervals %}
-        <tr class="day">
-          {% for item in day %}
-            {% if item.minutes == min_per_interval %}
-             <td class="minute lgreen" title="{{ item.hint }}"></td>
-            {% elif item.minutes == 0 %}
-             <td class="minute lred" title="{{ item.hint }}"></td>
-            {% else %}
-              <td class="minute lyellow" title="{{ item.hint }}"></td>
-            {% endif %}
+
+
+    <div class="container">
+
+      <div class="row">
+        <div class="center">{{ last|date:'m.d H:i:s' }}</div>
+      </div>
+      <div class="row">
+
+        <div class="input-field col s5">
+          <select id="id-device">
+            {% for item in device_names %}
+              <option {% if item.name == device_name %}selected{% endif %}  value="{{ item.name }}">{{ item.name }}</option>
+            {% endfor %}
+          </select>
+          <label>Устройство</label>
+        </div>
+
+        <div class="input-field col s4">
+          <select id="id-min-per-interval">
+            <option {% if min_per_interval == 10 %}selected{% endif %} value="10">10</option>
+            <option {% if min_per_interval == 20 %}selected{% endif %} value="20">20</option>
+            <option {% if min_per_interval == 30 %}selected{% endif %} value="30">30</option>
+            <option {% if min_per_interval == 60 %}selected{% endif %} value="60">60</option>
+          </select>
+          <label>Масштаб деления</label>
+        </div>
+
+        <div class="input-field col s3 right-align">
+          <a id="id-apply" class="waves-effect waves-light btn">ок</a>
+        </div>
+
+
+      </div>
+
+      <div class="row report">
+        <table class="report">
+          {% for day in intervals %}
+            <tr class="day">
+              {% for item in day %}
+                {% if item.minutes == min_per_interval %}
+                 <td class="minute lgreen" title="{{ item.hint }}"></td>
+                {% elif item.minutes == 0 %}
+                 <td class="minute lred" title="{{ item.hint }}"></td>
+                {% else %}
+                  <td class="minute lyellow" title="{{ item.hint }}"></td>
+                {% endif %}
+              {% endfor %}
+            </tr>
           {% endfor %}
-        </tr>
-      {% endfor %}
-    </table>
+        </table>
+      </div>
+
     </div>
 
-  </div>
 {% endblock %}
 
 {% block extrajs %}
   <script>
     document.addEventListener('DOMContentLoaded', function(){
       M.AutoInit();
+
+      document.getElementById("id-apply").addEventListener('click', function(){
+        var elems = document.querySelectorAll('select');
+        var instances = M.FormSelect.init(elems);
+
+        let deviceCtl =  M.FormSelect.getInstance(document.getElementById("id-device"));
+        let intervalCtl = M.FormSelect.getInstance(document.getElementById("id-min-per-interval"));
+
+        let deviceName = deviceCtl.getSelectedValues()[0]
+        let minPerInt = intervalCtl.getSelectedValues()[0]
+
+        document.location = `/main/livenessreport/${deviceName}/${minPerInt}`
+      })
+
       document.querySelectorAll("td.minute.lyellow, td.minute.lgreen").forEach(
         function(item){
           item.addEventListener('click', function(){

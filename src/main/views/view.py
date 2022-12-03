@@ -16,12 +16,15 @@ class IntervalViewItem():
     hint: str = ""
 
 @login_required
-def liveness_report(request):
+def liveness_report(request, device_name=None, min_per_interval=None):
 
     query = LivenessReport.objects.all()
+    device_names = query.values("name").distinct()
 
-    device_name = query.values().distinct().first()["name"]
-    min_per_interval = settings.MINUTES_PER_INTERVAL_DEFAULT
+    if not device_name:
+        device_name = query.values().distinct().first()["name"]
+    if not min_per_interval:
+        min_per_interval = settings.MINUTES_PER_INTERVAL_DEFAULT
 
     report_lines = query.filter(name=device_name).order_by('created_ts')
 
@@ -41,7 +44,9 @@ def liveness_report(request):
     context = {
         "intervals": report_intervals,
         "last": local_time,
-        "min_per_interval": min_per_interval
+        "min_per_interval": min_per_interval,
+        "device_names": device_names,
+        "device_name": device_name,
     }
     return render(request, 'main/simple.html', context)
 
