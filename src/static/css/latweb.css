@@ -46,3 +46,9 @@ td.minute.lgreen {
 img.move {
   max-width: 100%;
 }
+
+pre.toast-msg {
+  font-family: monospace, monospace;
+  font-size: 12px;
+  line-height: 12px;
+}

@@ -38,7 +38,7 @@
       document.querySelectorAll("td.minute.lyellow, td.minute.lgreen").forEach(
         function(item){
           item.addEventListener('click', function(){
-            M.toast({html: "<pre>"  + item.title + "</pre>"});
+            M.toast({html: "<pre class='toast-msg'>"  + item.title + "</pre>"});
           });
         }
       );
