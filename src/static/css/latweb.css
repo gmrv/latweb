@@ -6,11 +6,11 @@ div.head {
   margin-top: 20px;
 }
 
-div.report {
-  width: 95%;
-  overflow: auto;
-  max-width: fit-content;
-}
+/*div.report {*/
+/*  width: 95%;*/
+/*  overflow: auto;*/
+/*  max-width: fit-content;*/
+/*}*/
 
 table.report{
   width: fit-content;
@@ -39,3 +39,24 @@ td.pietd.clickable {
   cursor: pointer;
 }
 
+
+.report {
+  display: flex;
+  flex-flow: row wrap;
+  align-content: space-between;
+  justify-content: space-between;
+}
+.item {
+  text-align: center;
+  margin: 2px
+}
+/*.item:nth-child(4n - 1) {*/
+/*  background: silver;*/
+/*}*/
+.line-break {
+  width: 100%;
+}
+
+.hint {
+    font-size: 10px;
+}

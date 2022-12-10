@@ -14,9 +14,10 @@
       <div class="row head">
         <div class="center">{{ last|date:'m.d H:i:s' }}</div>
       </div>
+
       <div class="row">
 
-        <div class="input-field col s5">
+        <div class="input-field col s3">
           <select id="id-device">
             {% for item in device_names %}
               <option {% if item.name == device_name %}selected{% endif %}  value="{{ item.name }}">{{ item.name }}</option>
@@ -25,14 +26,24 @@
           <label>Устройство</label>
         </div>
 
-        <div class="input-field col s4">
+        <div class="input-field col s3">
           <select id="id-min-per-interval">
             <option {% if min_per_interval == 10 %}selected{% endif %} value="10">10</option>
             <option {% if min_per_interval == 20 %}selected{% endif %} value="20">20</option>
             <option {% if min_per_interval == 30 %}selected{% endif %} value="30">30</option>
             <option {% if min_per_interval == 60 %}selected{% endif %} value="60">60</option>
+            <option {% if min_per_interval == 1440 %}selected{% endif %} value="1440">1440</option>
           </select>
           <label>Масштаб (мин.)</label>
+        </div>
+
+        <div class="input-field col s3">
+          <select id="id-report-days-count">
+            <option {% if report_days_count == 1 %}selected{% endif %} value="1">1</option>
+            <option {% if report_days_count == 7 %}selected{% endif %} value="7">7</option>
+            <option {% if report_days_count == 30 %}selected{% endif %} value="30">30</option>
+          </select>
+          <label>Дней</label>
         </div>
 
         <div class="input-field col s3 right-align">
@@ -41,16 +52,17 @@
 
       </div>
 
-      <div class="row report">
-        <table class="report">
-          {% for day in intervals %}
-            <tr class="day">
-              {% for item in day %}
-                <td class="pietd {% if item.percent > 0 %}clickable{% endif %} " title="{{ item.hint }}"><div class="pie" data-percent="{{ item.percent_str }}"></div></td>
+      <div class="row">
+
+            <div class="report">
+              {% for item in intervals %}
+                <div class="item {% if item.percent > 0 %}clickable{% endif %} " title="{{ item.hint }}">
+                  <div class="pie valign-wrapper" data-percent="{{ item.percent_str }}"></div>
+                  <div class="hint">{{ item.start_time|date:'H:i' }}</div>
+                </div>
               {% endfor %}
-            </tr>
-          {% endfor %}
-        </table>
+            </div>
+
       </div>
 
     </div>
@@ -68,17 +80,19 @@
 
         let deviceCtl =  M.FormSelect.getInstance(document.getElementById("id-device"));
         let intervalCtl = M.FormSelect.getInstance(document.getElementById("id-min-per-interval"));
+        let reportDaysCountCtl = M.FormSelect.getInstance(document.getElementById("id-report-days-count"));
 
         let deviceName = deviceCtl.getSelectedValues()[0]
         let minPerInt = intervalCtl.getSelectedValues()[0]
+        let reportDaysCount = reportDaysCountCtl.getSelectedValues()[0]
 
-        document.location = `/main/livenessreport/${deviceName}/${minPerInt}`
+        document.location = `/main/livenessreport/${deviceName}/${minPerInt}/${reportDaysCount}`
       })
 
-      document.querySelectorAll("td.clickable").forEach(
+      document.querySelectorAll("div.clickable").forEach(
         function(item){
           item.addEventListener('click', function(){
-            M.toast({html: "<pre class='toast-msg'>"  + item.title + "</pre>"});
+            M.toast({html: "<pre class='toast-msg'>" + item.start_time + '\n' + item.title + "</pre>"});
           });
         }
       );
@@ -88,7 +102,7 @@
 
     function drawPies(){
       {#<div class="pie" data-percent="60"></div>#}
-      const PIE_SIZE = 12
+      const PIE_SIZE = 32
 
       let ps2 = PIE_SIZE/2
 
