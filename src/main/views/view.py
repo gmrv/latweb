@@ -1,4 +1,5 @@
-import datetime
+from datetime import datetime, timedelta
+from dataclasses import dataclass
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
@@ -11,46 +12,33 @@ from app import settings
 from main.utils import get_all_intervals
 
 
-class IntervalViewItem():
-    minutes: int = 0
-    max_minutes: int = 0
-    percent: int = 0
-
-    hint: str = ""
-
-    def inc(self):
-        self.minutes +=1
-        self.percent = (self.minutes / self.max_minutes * 100)
-
-    def percent_str(self):
-        return str(self.percent)
 
 @login_required
-def liveness_report(request, device_name=None, min_per_interval=None):
+def liveness_report(request, device_name=None, min_per_interval=None, report_days_count=None):
 
-    query = LivenessReport.objects.all()
-    device_names = query.values("name").distinct()
-
-    if not device_name:
-        device_name = query.values().distinct().first()["name"]
+    if not report_days_count:
+        report_days_count = 1
     if not min_per_interval:
         min_per_interval = settings.MINUTES_PER_INTERVAL_DEFAULT
 
+    start = datetime.today() - timedelta(days=report_days_count)
+    start = start.replace(hour=0, minute=0, second=0)
+    query = LivenessReport.objects.filter(created_ts__gte=start)
+    device_names = query.values("name").distinct()
+    if not device_name:
+        device_name = query.values().distinct().first()["name"]
+
     report_lines = query.filter(name=device_name).order_by('created_ts')
 
-    report_intervals = get_all_intervals(min_per_interval)
-
-    for i in range(0,len(report_intervals)):
-        for j in range(0,len(report_intervals[i])):
-            report_intervals[i][j] = IntervalViewItem()
-            report_intervals[i][j].max_minutes = min_per_interval
+    report_intervals = get_all_intervals(start, min_per_interval, report_days_count)
 
     for line in report_lines:
         local_time = line.created_ts.astimezone()
-        interval_index = (local_time.hour * 60 + local_time.minute) // min_per_interval
-        day_index = local_time.day - 1
-        report_intervals[day_index][interval_index].inc()
-        report_intervals[day_index][interval_index].hint += f"{local_time.strftime('%d.%m - %H:%M:%S')}\n"
+        days_from_start = (local_time - start.astimezone()).days
+        minutes_from_start = (days_from_start * 24 * 60) + (local_time.hour * 60) + local_time.minute
+        interval_index = minutes_from_start // min_per_interval
+        report_intervals[interval_index].inc()
+        report_intervals[interval_index].hint += f"{local_time.strftime('%d.%m - %H:%M:%S')}\n"
 
     context = {
         "intervals": report_intervals,
@@ -58,6 +46,7 @@ def liveness_report(request, device_name=None, min_per_interval=None):
         "min_per_interval": min_per_interval,
         "device_names": device_names,
         "device_name": device_name,
+        "report_days_count": report_days_count,
     }
     return render(request, 'main/simple.html', context)
 
