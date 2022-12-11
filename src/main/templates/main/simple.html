@@ -40,6 +40,7 @@
         <div class="input-field col s3">
           <select id="id-report-days-count">
             <option {% if report_days_count == 1 %}selected{% endif %} value="1">1</option>
+            <option {% if report_days_count == 2 %}selected{% endif %} value="2">2</option>
             <option {% if report_days_count == 7 %}selected{% endif %} value="7">7</option>
             <option {% if report_days_count == 30 %}selected{% endif %} value="30">30</option>
           </select>
@@ -92,7 +93,7 @@
       document.querySelectorAll("div.clickable").forEach(
         function(item){
           item.addEventListener('click', function(){
-            M.toast({html: "<pre class='toast-msg'>" + item.start_time + '\n' + item.title + "</pre>"});
+            M.toast({html: "<pre class='toast-msg'>" + item.title + "</pre>"});
           });
         }
       );
