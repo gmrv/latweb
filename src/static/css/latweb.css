@@ -6,19 +6,6 @@ div.head {
   margin-top: 20px;
 }
 
-/*div.report {*/
-/*  width: 95%;*/
-/*  overflow: auto;*/
-/*  max-width: fit-content;*/
-/*}*/
-
-table.report{
-  width: fit-content;
-  display: inherit;
-  border-collapse: inherit;
-  border-spacing: 0px;
-}
-
 img.move {
   max-width: 100%;
 }
@@ -29,30 +16,23 @@ pre.toast-msg {
   line-height: 12px;
 }
 
-td.pietd {
-  border: solid green 0px;
-  padding: 1px 1px;
-  line-height: 11px;
-}
-
-td.pietd.clickable {
-  cursor: pointer;
-}
-
-
 .report {
   display: flex;
   flex-flow: row wrap;
   align-content: space-between;
   justify-content: space-between;
 }
+
+.hidden {
+  display: none
+}
+
+
 .item {
   text-align: center;
   margin: 2px
 }
-/*.item:nth-child(4n - 1) {*/
-/*  background: silver;*/
-/*}*/
+
 .line-break {
   width: 100%;
 }

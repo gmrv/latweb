@@ -14,7 +14,9 @@ from main.utils import get_all_intervals
 
 
 @login_required
-def liveness_report(request, device_name=None, min_per_interval=None, report_days_count=1):
+def liveness_report(request, device_name=None, min_per_interval=None, report_days_count=1, is_incomplete_only="false"):
+
+    is_incomplete_only = {"true": True, "false": False}[is_incomplete_only]
 
     if not report_days_count:
         report_days_count = 1
@@ -40,6 +42,10 @@ def liveness_report(request, device_name=None, min_per_interval=None, report_day
         report_intervals[interval_index].inc()
         report_intervals[interval_index].hint += f"{local_time.strftime('%d.%m - %H:%M:%S')}\n"
 
+    if is_incomplete_only:
+        report_intervals = filter(lambda item: item.percent != 0 and item.percent < 100, report_intervals)
+
+
     context = {
         "intervals": report_intervals,
         "last": local_time,
@@ -47,6 +53,7 @@ def liveness_report(request, device_name=None, min_per_interval=None, report_day
         "device_names": device_names,
         "device_name": device_name,
         "report_days_count": report_days_count,
+        "is_incomplete_only": is_incomplete_only,
     }
     return render(request, 'main/simple.html', context)
 
