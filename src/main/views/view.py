@@ -14,14 +14,14 @@ from main.utils import get_all_intervals
 
 
 @login_required
-def liveness_report(request, device_name=None, min_per_interval=None, report_days_count=None):
+def liveness_report(request, device_name=None, min_per_interval=None, report_days_count=1):
 
     if not report_days_count:
         report_days_count = 1
     if not min_per_interval:
         min_per_interval = settings.MINUTES_PER_INTERVAL_DEFAULT
 
-    start = datetime.today() - timedelta(days=report_days_count)
+    start = datetime.today() - timedelta(days=report_days_count-1)
     start = start.replace(hour=0, minute=0, second=0)
     query = LivenessReport.objects.filter(created_ts__gte=start)
     device_names = query.values("name").distinct()
