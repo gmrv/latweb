@@ -1,9 +1,16 @@
 from django.forms import model_to_dict
-from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from api.models.core import LivenessReport
-from api.serializers.sirializer import LivenessReportSerializer
+
+
+def has_command(device_name) -> bool:
+    return True
+
+
+def get_command(device_name) -> str:
+    return "ls -la"
+
 
 class LivenessReportAPIView(APIView):
     def get(self, request):
@@ -15,4 +22,10 @@ class LivenessReportAPIView(APIView):
             name=device_name,
             code=0
         )
-        return Response({'post': model_to_dict(line_new)})
+
+        model_dict = model_to_dict(line_new)
+
+        if has_command(device_name):
+            model_dict["command"] = get_command(device_name)
+
+        return Response({'post': model_dict})

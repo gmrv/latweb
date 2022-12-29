@@ -9,8 +9,8 @@ RUN apt-get update && \
     apt-get install -y sudo git curl && \
     #echo "${APP_USER} ALL = NOPASSWD: /usr/sbin/update-ca-certificates" > /etc/sudoers.d/express_bot && \
     apt-get clean autoclean && \
-    apt-get autoremove --yes && \
-    rm -rf /var/lib/{apt,dpkg,cache,log}/
+    apt-get autoremove --yes
+    #rm -rf /var/lib/{apt,dpkg,cache,log}/
 
 ENV APP_USER=appuser
 RUN useradd --create-home $APP_USER
